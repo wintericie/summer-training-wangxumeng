@@ -1,0 +1,85 @@
+<html>    
+  <head>    
+        <meta charset="utf-8">    
+        <title>Pie</title>    
+  </head>   
+  
+<style>  
+  body{font-family: Arial;font-size:40px;}
+  .mypie{
+    top:100px;
+    left:200px;
+    position:absolute;
+  }
+  .header{
+    position: absolute;
+    top: -30px;
+    left: 370px;
+    z-index: 1;
+    color: #AAAAAA;
+    font-size: 60px;
+  }      
+</style>  
+    <body>   
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> 
+        <script>
+            var dataset = [ 30 , 10 , 43 , 55 , 13 ]; 
+            var nameset = [ "A" , "B" , "C" , "D" , "E" ];  
+            var color = d3.scale.category10();  
+        </script>
+        <p class = "header">My Pie</p>
+        <div class="mypie">   
+            <script>    
+            var width = 500;  
+            var height = 600; 
+            
+            var svg = d3.select("body").append("svg");  
+              
+            var pie = d3.layout.pie();  
+              
+            var outerRadius = width / 2;  
+            var innerRadius = width / 5;  
+            var arc = d3.svg.arc()  
+                            .innerRadius(innerRadius)  
+                            .outerRadius(outerRadius);  
+            var xzero = outerRadius + 200;
+            var yzero = outerRadius + 100;  
+            var arcs = svg.selectAll("g")  
+                          .data(pie(dataset))  
+                          .enter()  
+                          .append("g")  
+                          .attr("transform","translate("+xzero+","+yzero+")");  
+                            
+            arcs.append("path")  
+                .attr("fill",function(d,i){  
+                    return color(i);  
+                })  
+                .attr("d",function(d){  
+                    return arc(d);  
+                });  
+              
+            arcs.append("text")  
+                .attr("transform",function(d,i){  
+                    var x = -45 + 15 * i;
+                    var y = i * 30 - 45;
+                    return "translate(" + x + "," + y + ")";
+                }) 
+                .attr("fill",function(d,i){
+                    return color(i);
+                })
+                .text(function(d,i){
+                    return nameset[i];
+                });
+            arcs.append("text")  
+                .attr("transform",function(d){  
+                    return "translate(" + arc.centroid(d) + ")";  
+                }) 
+                .attr("fill", "#FFFFFF")
+                .attr("text-anchor","middle")  
+                .text(function(d){  
+                    return d.value;  
+                });  
+            </script>    
+        </div> 
+    </body>    
+</html>    
