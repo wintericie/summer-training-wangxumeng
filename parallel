@@ -1,0 +1,167 @@
+[
+  {
+    "data": 
+    {
+      "band": "魅族",
+      "name": "MX5",
+      "price": 1799,
+      "MainScreenSize": 5.5,
+      "ScreenPixelDensity": 401,
+      "BatteryCapacity": 3150,
+      "RearCamera": 2070,
+      "FrontCamera":500,
+      "CPU": "联发科HelioX10Turbo",
+      "CPUFrequency": 2.2
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "三星",
+      "name": "GALAXY A8",
+      "price": 3039,
+      "MainScreenSize": 5.7,
+      "ScreenPixelDensity": 386,
+      "BatteryCapacity": 3050,
+      "RearCamera": 1600,
+      "FrontCamera":500,
+      "CPU": "骁龙615(MSM8939)",
+      "CPUFrequency": 1.5
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "三星",
+      "name": "GALAXY S6",
+      "price": 6088,
+      "MainScreenSize": 5.1,
+      "ScreenPixelDensity": 576,
+      "BatteryCapacity": 2600,
+      "RearCamera": 1600,
+      "FrontCamera":500,
+      "CPU": "三星 Exynos 7420",
+      "CPUFrequency": 1.5
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "oppo",
+      "name": "R7",
+      "price": 2499,
+      "MainScreenSize": 5,
+      "ScreenPixelDensity": 441,
+      "BatteryCapacity": 2320,
+      "RearCamera": 1300,
+      "FrontCamera":800,
+      "CPU": "联发科 MT6752",
+      "CPUFrequency": 1.7
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "oppo",
+      "name": "find7",
+      "price": 2499,
+      "MainScreenSize": 5.5,
+      "ScreenPixelDensity": 534,
+      "BatteryCapacity": 3000,
+      "RearCamera": 1300,
+      "FrontCamera":800,
+      "CPU": "骁龙801(MSM8974AC)",
+      "CPUFrequency": 2.5
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "vivo",
+      "name": "Xplay3S",
+      "price": 2498,
+      "MainScreenSize": 6,
+      "ScreenPixelDensity": 490,
+      "BatteryCapacity": 3200,
+      "RearCamera": 1300,
+      "FrontCamera":500,
+      "CPU": "骁龙801(MSM8974AB)",
+      "CPUFrequency": 2.3
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "vivo",
+      "name": "X5Pro",
+      "price": 2598,
+      "MainScreenSize": 5.2,
+      "ScreenPixelDensity": 424,
+      "BatteryCapacity": 2300,
+      "RearCamera": 1300,
+      "FrontCamera":800,
+      "CPU": "联发科 MT6752",
+      "CPUFrequency": 1.7
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "apple",
+      "name": "iphone6",
+      "price": 5288,
+      "MainScreenSize": 4.7,
+      "ScreenPixelDensity": 326,
+      "BatteryCapacity": 1810,
+      "RearCamera": 800,
+      "FrontCamera":120,
+      "CPU": "苹果 A8+M8协处理器",
+      "CPUFrequency": 1.4
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "apple",
+      "name": "iphone5s",
+      "price": 3320,
+      "MainScreenSize": 4,
+      "ScreenPixelDensity": 326,
+      "BatteryCapacity": 1560,
+      "RearCamera": 800,
+      "FrontCamera":120,
+      "CPU": "苹果 A7/M7协处理器",
+      "CPUFrequency": 1.3
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "华为",
+      "name": "荣耀7",
+      "price": 2459,
+      "MainScreenSize": 5.2,
+      "ScreenPixelDensity": 424,
+      "BatteryCapacity": 3100,
+      "RearCamera": 2000,
+      "FrontCamera":800,
+      "CPU": "海思麒麟 935",
+      "CPUFrequency": 1.5
+    }
+  },
+  {
+    "data": 
+    {
+      "band": "华为",
+      "name": "P8",
+      "price": 3800,
+      "MainScreenSize": 5.2,
+      "ScreenPixelDensity": 434,
+      "BatteryCapacity": 2680,
+      "RearCamera": 1300,
+      "FrontCamera":800,
+      "CPU": "海思麒麟 935",
+      "CPUFrequency": 1.5
+    }
+  }
+]
