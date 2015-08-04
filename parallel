@@ -18,7 +18,7 @@ body{font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
 #grid { height: auto; width: 100%; margin-bottom:10px;}
 
 #headline { 
-	height: 35px; 
+	height: 20px; 
 	width: 100%;
 	font-weight:bold;
 	text-align: center;
@@ -88,7 +88,15 @@ svg {
 
 </style>
 <div id="headline"  style="color:#6699FF;background-color:#E1FFFF">
-	<h1>数据不一定准，数据不一定准，数据不一定准</h1>
+	<input type="checkbox" value="Model" name="check"/>Model
+    <input type="checkbox" value="MainScreenSize" name="check"/>MainScreenSize
+    <input type="checkbox" value="ScreenPixelDensity" name="check"/>ScreenPixelDensity
+    <input type="checkbox" value="BatteryCapacity" name="check"/>BatteryCapacity
+    <input type="checkbox" value="RearCamera" name="check"/>RearCamera
+    	<input type="checkbox" value="FrontCamera" name="check"/>FrontCamera
+    <input type="checkbox" value="CPUFrequency" name="check"/>CPUFrequency
+    <input type="checkbox" value="price" name="check"/>price
+    <input type="button" value="update" onclick="update()"/>
 </div>
 
 <div id="radio_designations" class="parcoords"></div>
@@ -100,7 +108,16 @@ var colorset = d3.scale.category10();
 
 var parcoords = d3.parcoords()("#radio_designations").alpha(0.4);
 
-var dimensions = ["name", "MainScreenSize","ScreenPixelDensity","BatteryCapacity","RearCamera","FrontCamera","CPUFrequency", "price"];
+var dimensions = ["Model", "MainScreenSize","ScreenPixelDensity","BatteryCapacity","RearCamera","FrontCamera","CPUFrequency", "price"];
+
+var _dimensions = ["Model", "MainScreenSize","ScreenPixelDensity","BatteryCapacity","RearCamera","FrontCamera","CPUFrequency", "price"];
+
+var check_array=document.getElementsByName("check");
+
+for(var i = 0;i<check_array.length;i++)
+ {
+    check_array[i].checked = true;
+ }
 
 d3.json('paralleldata.json', function(raw) {
 	var data = raw.map(function(d) { return d.data });
@@ -124,7 +141,7 @@ d3.json('paralleldata.json', function(raw) {
 		});
 
 	parcoords.on("brush", function(d) {
-	d3.select("#grid")
+	  d3.select("#grid")
 		.datum(d.slice(0,40))
 		.call(grid)
 		.selectAll(".tablerow")
@@ -134,6 +151,23 @@ d3.json('paralleldata.json', function(raw) {
 		});
 	});
 });
+
+function update(){
+  _dimensions = [];
+  for(var i = 0;i<check_array.length;i++)
+  {
+      if(check_array[i].checked==true)
+      {         
+          _dimensions.push(check_array[i].value);
+      }
+  }
+  parcoords
+	.detectDimensions()
+	.dimensions(_dimensions)
+	.render()
+	.brushable()
+	.updateAxes(); 
+}
 
 d3.divgrid = function(config) {
   var columns = [];
