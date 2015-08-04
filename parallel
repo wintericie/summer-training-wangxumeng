@@ -3,7 +3,7 @@
     "data": 
     {
       "band": "魅族",
-      "name": "MX5",
+      "Model": "MX5",
       "price": 1799,
       "MainScreenSize": 5.5,
       "ScreenPixelDensity": 401,
@@ -18,7 +18,7 @@
     "data": 
     {
       "band": "三星",
-      "name": "GALAXY A8",
+      "Model": "GALAXY A8",
       "price": 3039,
       "MainScreenSize": 5.7,
       "ScreenPixelDensity": 386,
@@ -33,7 +33,7 @@
     "data": 
     {
       "band": "三星",
-      "name": "GALAXY S6",
+      "Model": "GALAXY S6",
       "price": 6088,
       "MainScreenSize": 5.1,
       "ScreenPixelDensity": 576,
@@ -48,7 +48,7 @@
     "data": 
     {
       "band": "oppo",
-      "name": "R7",
+      "Model": "R7",
       "price": 2499,
       "MainScreenSize": 5,
       "ScreenPixelDensity": 441,
@@ -63,7 +63,7 @@
     "data": 
     {
       "band": "oppo",
-      "name": "find7",
+      "Model": "find7",
       "price": 2499,
       "MainScreenSize": 5.5,
       "ScreenPixelDensity": 534,
@@ -78,7 +78,7 @@
     "data": 
     {
       "band": "vivo",
-      "name": "Xplay3S",
+      "Model": "Xplay3S",
       "price": 2498,
       "MainScreenSize": 6,
       "ScreenPixelDensity": 490,
@@ -93,7 +93,7 @@
     "data": 
     {
       "band": "vivo",
-      "name": "X5Pro",
+      "Model": "X5Pro",
       "price": 2598,
       "MainScreenSize": 5.2,
       "ScreenPixelDensity": 424,
@@ -108,7 +108,7 @@
     "data": 
     {
       "band": "apple",
-      "name": "iphone6",
+      "Model": "iphone6",
       "price": 5288,
       "MainScreenSize": 4.7,
       "ScreenPixelDensity": 326,
@@ -123,7 +123,7 @@
     "data": 
     {
       "band": "apple",
-      "name": "iphone5s",
+      "Model": "iphone5s",
       "price": 3320,
       "MainScreenSize": 4,
       "ScreenPixelDensity": 326,
@@ -138,7 +138,7 @@
     "data": 
     {
       "band": "华为",
-      "name": "荣耀7",
+      "Model": "荣耀7",
       "price": 2459,
       "MainScreenSize": 5.2,
       "ScreenPixelDensity": 424,
@@ -153,7 +153,7 @@
     "data": 
     {
       "band": "华为",
-      "name": "P8",
+      "Model": "P8",
       "price": 3800,
       "MainScreenSize": 5.2,
       "ScreenPixelDensity": 434,
