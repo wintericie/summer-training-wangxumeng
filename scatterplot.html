@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<link type="text/css" rel="stylesheet" href="style.css">
+	<style type="text/css">
+	svg {
+	  font-size: 14px;
+	}
+
+	.axis {
+	  shape-rendering: crispEdges;
+	}
+
+	.axis line {
+	  stroke: #ddd;
+	  stroke-width: .5px;
+	}
+
+	.axis path {
+	  display: none;
+	}
+
+	rect.extent {
+	  fill: #000;
+	  fill-opacity: .125;
+	  stroke: #fff;
+	}
+
+	rect.frame {
+	  fill: #fff;
+	  fill-opacity: .7;
+	  stroke: #aaa;
+	}
+
+	circle {
+	  fill: #ccc;
+	  fill-opacity: .5;
+	}
+
+	.legend circle {
+	  fill-opacity: 1;
+	}
+
+	.legend text {
+	  font-size: 18px;
+	  font-style: Arial;
+	}
+
+	.cell text {
+	  pointer-events: none;
+	}
+
+	.setosa {
+	  fill: #800;
+	}
+
+	.versicolor {
+	  fill: #080;
+	}
+
+	.virginica {
+	  fill: #008;
+	}
+
+	.bar rect {
+	  fill: #CCCCCC;
+	  shape-rendering: crispEdges;
+	}
+
+	.bar text {
+	  fill: #fff;
+	}
+	</style>
+  </head>
+  <body>
+  	<script type="text/javascript" src="d3.js"></script>
+    <script type="text/javascript">
+	d3.csv("scatterdata.csv", function(flowers) {
+	  // Size parameters.
+	  var size = 140,
+	      padding = 15,
+	      n = 4,
+	      traits = ["sepal_length", "sepal_width", "petal_length", "petal_width"];
+
+	  // Position scales.
+	  var x = {}, y = {};
+	  traits.forEach(function(trait) {
+	    // Coerce values to numbers.
+	    flowers.forEach(function(d) { d[trait] = +d[trait]; });
+
+	    var value = function(d) { return d[trait]; },
+	        domain = [d3.min(flowers, value), d3.max(flowers, value)],
+	        range = [padding / 2, size - padding / 2];
+	    x[trait] = d3.scale.linear().domain(domain).range(range);
+	    y[trait] = d3.scale.linear().domain(domain).range(range.reverse());
+	  });
+
+	  // Axes.
+	  var axis = d3.svg.axis()
+	      .ticks(5)
+	      .tickSize(size * n);
+
+	  // Brush.
+	  var brush = d3.svg.brush()
+	      .on("brushstart", brushstart)
+	      .on("brush", brush)
+	      .on("brushend", brushend);
+
+	  // Root panel.
+	  var svg = d3.select("body").append("svg:svg")
+	      .attr("width", 1280)
+	      .attr("height", 800)
+	    .append("svg:g")
+	      .attr("transform", "translate(359.5,30.5)");
+
+	  // Legend.
+	  var legend = svg.selectAll("g.legend")
+	      .data(["setosa", "versicolor", "virginica"])
+	    .enter().append("svg:g")
+	      .attr("class", "legend")
+	      .attr("transform", function(d, i) { return "translate(-200," + (i * 20 + 20) + ")"; });
+
+	  legend.append("svg:circle")
+	      .attr("class", String)
+	      .attr("r", 3);
+
+	  legend.append("svg:text")
+	      .attr("x", 12)
+	      .attr("dy", ".31em")
+	      .text(function(d) { return d; });
+
+	  // X-axis.
+	  svg.selectAll("g.x.axis")
+	      .data(traits)
+	    .enter().append("svg:g")
+	      .attr("class", "x axis")
+	      .attr("transform", function(d, i) { 
+	      	if(i%2===0) return "translate(" + i * size + ",560)"; 
+	      	else return "translate(" + i * size + ",0)"; 
+	      })
+	      .each(function(d,i) { 
+	      	if(i%2===0)
+	      		d3.select(this).call(axis.scale(x[d]).orient("top")); 
+	        else
+	        	d3.select(this).call(axis.scale(x[d]).orient("bottom"));
+	  		});
+
+	  // Y-axis.
+	  svg.selectAll("g.y.axis")
+	      .data(traits)
+	    .enter().append("svg:g")
+	      .attr("class", "y axis")
+	      .attr("transform", function(d, i) { 
+	      	if(i%2===0) return "translate(0," + i * size + ")"; 
+	      	else return "translate(560," + i * size + ")";
+	      })
+	      .each(function(d,i) { 
+	      	if(i%2===0)
+	      		d3.select(this).call(axis.scale(x[d]).orient("right")); 
+	        else
+	        	d3.select(this).call(axis.scale(x[d]).orient("left"));
+	  		});
+
+	  // Cell and plot.
+	  var cell = svg.selectAll("g.cell")
+	      .data(cross(traits, traits))
+	    .enter().append("svg:g")
+	      .attr("class", "cell")
+	      .attr("transform", function(d) { return "translate(" + d.i * size + "," + d.j * size + ")"; })
+	      .each(plot);
+
+	  cell.filter(function(d) { return d.i == d.j; }).append("svg:text")
+	      .attr("x", padding)
+	      .attr("y", 80)
+	      .attr("dy", ".30em")
+	      .attr("style","font-weight:bold;font-size:18px")
+	      .text(function(d) { return d.x; });    
+
+	  function plot(p) {
+	  	if(p.x===p.y){
+	  		var values = [];
+	  		if(p.x==="sepal_length")
+	  			flowers.forEach(function(d){
+	  				values.push(d.sepal_length);
+	  		});
+	  		else if(p.x==="sepal_width")
+	  			flowers.forEach(function(d){
+	  				values.push(d.sepal_width);
+	  		});
+	  		else if(p.x==="petal_length")
+	  			flowers.forEach(function(d){
+	  				values.push(d.petal_length);
+	  		});
+	  		else
+	  			flowers.forEach(function(d){
+	  				values.push(d.petal_width);
+	  		});
+
+	  		var formatCount = d3.format(",.0f");
+
+	  		var xx = d3.scale.linear()
+			    .domain([d3.min(values),d3.max(values)])
+			    .range([padding, size -  padding]);
+
+			var data = d3.layout.histogram()
+			    .bins(5)
+			    (values);
+
+			var yy = d3.scale.linear()
+			    .domain([0, d3.max(data, function(d) { return d.y; })])
+			    .range([size - padding, 10]);
+
+			var cell = d3.select(this);
+	    
+	    	// Plot frame.
+	    	cell.append("svg:rect")
+	    	    .attr("class", "frame")
+	    	    .attr("x", padding / 2)
+	    	    .attr("y", padding / 2)
+	    	    .attr("width", size - padding)
+	            .attr("height", size - padding)
+
+			var bar = cell.selectAll(".bar")
+			    .data(data)
+			  .enter().append("g")
+			    .attr("class", "bar")
+			    .attr("transform", function(d) { return "translate(" + xx(d.x) + "," + yy(d.y) + ")"; });
+
+			bar.append("rect")
+			    .attr("x", 1)
+			    .attr("width", 20)
+			    .attr("height", function(d) { return size - padding - yy(d.y); });
+
+			bar.append("text")
+			    .attr("dy", ".30em")
+			    .attr("y", 6)
+			    .attr("x", 10)
+			    .attr("text-anchor", "middle")
+			    .text(function(d) { return formatCount(d.y); });
+	  	}
+	    else{
+	    	var cell = d3.select(this);
+	    
+	    	// Plot frame.
+	    	cell.append("svg:rect")
+	    	    .attr("class", "frame")
+	    	    .attr("x", padding / 2)
+	    	    .attr("y", padding / 2)
+	    	    .attr("width", size - padding)
+	            .attr("height", size - padding);
+	    
+	  	    // Plot dots.
+	   	    cell.selectAll("circle")
+	   	        .data(flowers)
+    	      .enter().append("svg:circle")
+	            .attr("class", function(d) { return d.species; })
+	            .attr("cx", function(d) { return x[p.x](d[p.x]); })
+	   	        .attr("cy", function(d) { return y[p.y](d[p.y]); })
+	   	        .attr("r", 3);
+	    
+	   	    // Plot brush.
+	    	cell.call(brush.x(x[p.x]).y(y[p.y]));
+	    }
+	  }
+
+	  // Clear the previously-active brush, if any.
+	  function brushstart(p) {
+	    if (brush.data !== p) {
+	      cell.call(brush.clear());
+	      brush.x(x[p.x]).y(y[p.y]).data = p;
+	    }
+	  }
+
+	  // Highlight the selected circles.
+	  function brush(p) {
+	    var e = brush.extent();
+    svg.selectAll(".cell circle").attr("class", function(d) {
+      return e[0][0] <= d[p.x] && d[p.x] <= e[1][0]
+          && e[0][1] <= d[p.y] && d[p.y] <= e[1][1]
+          ? d.species : null;
+    });
+  }
+
+  // If the brush is empty, select all circles.
+  function brushend() {
+    if (brush.empty()) svg.selectAll(".cell circle").attr("class", function(d) {
+      return d.species;
+    });
+  }
+
+  function cross(a, b) {
+    var c = [], n = a.length, m = b.length, i, j;
+    for (i = -1; ++i < n;) for (j = -1; ++j < m;) c.push({x: a[i], i: i, y: b[j], j: j});
+    return c;
+  }
+});
+
+    </script>
+  </body>
+</html>
