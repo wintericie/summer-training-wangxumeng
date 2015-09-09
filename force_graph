@@ -1,0 +1,144 @@
+var down = false, no = 0;
+var that;
+function Graph( canvas_name, width, height ) {
+	this.svg = "http://www.w3.org/2000/svg";
+	this.canvas = document.getElementById(canvas_name);
+	this.width = width;
+	this.height = height;
+	this.canvas.style.width = width + "px";
+	this.canvas.style.height = height + "px";
+	this.vertices = {};
+	this.forcex = {};
+	this.forcey = {};
+	this.stepsize = 0.0005;
+	this.task = null;
+	// tunables to adjust the layout
+	this.repulsion = 20000; // repulsion constant, adjust for wider/narrower spacing
+	this.spring_length = 10; // base resting length of springs
+}
+var num = 0;
+Graph.prototype.createVertex = function( name, color ) { // XXX -- should support separate id and name 
+	if( color === undefined ) {
+		color = "#6699FF";
+	}
+	// create an SVG rectangle, attach additional attributed to it
+	var vertex = document.createElementNS(this.svg, "circle");
+	vertex.setAttribute("style", "fill: white;stroke: " + color + "; stroke-width: 2px;");
+	vertex.setAttribute("r", "5px"); 
+	vertex.posx = innerWidth/2 + Math.random();
+	vertex.posy = innerHeight/2 + Math.random();
+	vertex.setAttribute("cx", vertex.posx );
+	vertex.setAttribute("cy", vertex.posy );
+	vertex.edges = new Array();
+	this.canvas.appendChild(vertex);
+	vertex.num = num;
+	num++;
+	// text label
+	vertex.name = name;
+	vertex.textLabel = document.createElementNS(this.svg, "text");
+	vertex.textLabel.setAttribute("style", "fill: #000; stroke-width: 1px;");
+	vertex.textLabel.style.display = 'none';
+	vertex.textLabel.appendChild( document.createTextNode( name ) );	
+	this.canvas.appendChild( vertex.textLabel );
+	
+	// get the size of the rectangle from the text label's bounding box
+	vertex.h = vertex.textLabel.getBBox().height + 10;
+	vertex.w = vertex.textLabel.getBBox().width + 10;
+	vertex.setAttribute("height", vertex.h + "px");
+	vertex.setAttribute("width", vertex.w + "px");
+	vertex.addEventListener("mouseover", function(){ if(!down)this.textLabel.style.display = 'block'; });
+	vertex.addEventListener("mouseout", function(){ this.textLabel.style.display = 'none'; });
+	vertex.addEventListener("mousedown", function(e){ 
+		down = true; no = this.num;
+	});
+	vertex.addEventListener("mouseup", function(){ down =  false; that.updateLayout(); });
+
+	this.vertices[name] = vertex;
+}
+Graph.prototype.createEdge = function( a, b, style ) {
+	var line = document.createElementNS(this.svg, "path");
+	if( style === undefined ) {
+		style = "stroke: #ccc; stroke-width: 2px;";
+	}
+	line.setAttribute("style", style);
+	this.canvas.insertBefore(line, this.canvas.firstChild);
+	this.vertices[a].edges[b] = { "dest" : b, "line": line };
+	this.vertices[b].edges[a] = { "dest" : a, "line": line };
+}
+Graph.prototype.updateLayout = function() {
+	for (i in this.vertices) {
+		this.forcex[i] = (innerWidth/2 - this.vertices[i].posx)*10;
+		this.forcey[i] = (innerHeight/2 - this.vertices[i].posy)*10;
+		this.forcey[i] = 0;
+		for (j in this.vertices) {
+			if( i !== j ) {
+				// using rectangle's center, bounding box would be better
+				var deltax = this.vertices[j].posx - this.vertices[i].posx;
+				var deltay = this.vertices[j].posy - this.vertices[i].posy;
+				var d2 = deltax * deltax + deltay * deltay;
+
+				// add some jitter if distance^2 is very small
+				if( d2 < 0.01 ) {
+	                deltax = 0.1 * Math.random() + 0.1;
+	                deltay = 0.1 * Math.random() + 0.1;
+					var d2 = deltax * deltax + deltay * deltay;
+                }
+
+				// Coulomb's law -- repulsion varies inversely with square of distance
+				this.forcex[i] -= (this.repulsion / d2) * deltax;
+				this.forcey[i] -= (this.repulsion / d2) * deltay;
+
+				// spring force along edges, follows Hooke's law
+				if( this.vertices[i].edges[j] ) {
+					var distance = Math.sqrt(d2);
+					this.forcex[i] += (distance - this.spring_length) * deltax;
+					this.forcey[i] += (distance - this.spring_length) * deltay;
+				}
+			}
+		}
+	}
+
+	 that = this;
+	for (i in this.vertices) {
+		if(!down||(no != this.vertices[i].num)){
+			this.vertices[i].posx += this.forcex[i] * this.stepsize;
+			this.vertices[i].posy += this.forcey[i] * this.stepsize;
+			this.vertices[i].setAttribute("cx", this.vertices[i].posx );
+			this.vertices[i].setAttribute("cy", this.vertices[i].posy );
+			this.vertices[i].textLabel.setAttribute("x", this.vertices[i].posx + 5 + "px");
+			this.vertices[i].textLabel.setAttribute("y", this.vertices[i].posy + ( 2 * this.vertices[i].h/3 )+ "px");
+		}
+		// update edges
+		for (j in this.vertices[i].edges) {
+			this.vertices[i].edges[j].line.setAttribute("d", "M"+this.vertices[i].posx+","+this.vertices[i].posy+" L"+this.vertices[this.vertices[i].edges[j].dest].posx+" "+this.vertices[this.vertices[i].edges[j].dest].posy);
+		}
+	}
+}
+Graph.prototype.go = function() {
+	// already running
+	if (this.task) {
+		return;
+	}
+	obj = this;
+	this.iteration = 0;
+	this.task = window.setInterval(function(){ obj.updateLayout(); }, 1);
+	this.canvas.addEventListener("mousemove", function(e){
+		e=e||window.event;
+		if(down){
+			for(i in that.vertices){
+				if(no===that.vertices[i].num){
+					that.vertices[i].posx += e.movementX;
+					that.vertices[i].posy += e.movementY;
+					that.vertices[i].setAttribute("cx", that.vertices[i].posx );
+					that.vertices[i].setAttribute("cy", that.vertices[i].posy );
+					obj.updateLayout();
+					break;
+				}
+			}
+		}
+	});
+}
+Graph.prototype.quit = function() {
+	window.clearInterval(this.task);
+	this.task = null;
+}
